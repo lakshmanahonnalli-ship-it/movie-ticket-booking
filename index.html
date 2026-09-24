@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CinePulse - Interactive Movie Ticket Booking</title>
+  <meta name="description" content="Modern movie ticket booking application with real-time seat availability, live remaining seat counters, tiered pricing, and digital ticket generation.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand-logo">
+        <span class="logo-icon">🎬</span>
+        <span class="logo-text">Cine<strong>Pulse</strong></span>
+        <span class="badge-mini">IMAX 4K</span>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Currency Toggle -->
+        <div class="currency-selector" title="Switch Currency">
+          <button class="curr-btn active" data-currency="INR">₹ INR</button>
+          <button class="curr-btn" data-currency="USD">$ USD</button>
+        </div>
+        <!-- Reset Demo Data -->
+        <button id="resetDemoBtn" class="btn-secondary-sm" title="Clear saved bookings and reset to default">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+          </svg>
+          Reset Demo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <main class="main-wrapper">
+
+    <!-- Section 1: Movie Carousel Selector -->
+    <section class="movie-section">
+      <div class="section-header">
+        <h2 class="section-title">Now Showing in Theaters</h2>
+        <p class="section-subtitle">Select a blockbuster movie to book your preferred seats</p>
+      </div>
+
+      <div class="movie-cards-track" id="movieCardsTrack">
+        <!-- Dynamically populated via app.js -->
+      </div>
+    </section>
+
+    <!-- Section 2: Show details & schedule -->
+    <section class="schedule-section">
+      <div class="schedule-container">
+        <!-- Date Selector -->
+        <div class="date-picker-group">
+          <span class="filter-label">Select Date:</span>
+          <div class="date-chips" id="dateChips">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Showtime Selector -->
+        <div class="time-picker-group">
+          <span class="filter-label">Select Showtime:</span>
+          <div class="time-chips" id="timeChips">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Live Seat Statistics (Specific to User's Questions) -->
+    <section class="stats-dashboard">
+      <div class="stat-card stat-total">
+        <div class="stat-icon">🪑</div>
+        <div class="stat-info">
+          <span class="stat-label">Total Seats</span>
+          <span class="stat-value" id="statTotalSeats">64</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-available">
+        <div class="stat-icon">🟢</div>
+        <div class="stat-info">
+          <span class="stat-label">Seats Available</span>
+          <span class="stat-value text-emerald" id="statAvailableSeats">0</span>
+        </div>
+        <span class="stat-pill pill-emerald" id="availablePercent">0%</span>
+      </div>
+
+      <div class="stat-card stat-booked">
+        <div class="stat-icon">🔴</div>
+        <div class="stat-info">
+          <span class="stat-label">Tickets Booked</span>
+          <span class="stat-value text-rose" id="statBookedSeats">0</span>
+        </div>
+        <span class="stat-pill pill-rose" id="bookedPercent">0%</span>
+      </div>
+
+      <div class="stat-card stat-selected">
+        <div class="stat-icon">✨</div>
+        <div class="stat-info">
+          <span class="stat-label">Your Selection</span>
+          <span class="stat-value text-accent" id="statSelectedSeats">0</span>
+        </div>
+        <span class="stat-pill pill-accent" id="selectedBadge">0 Seats</span>
+      </div>
+    </section>
+
+    <!-- Availability Progress Bar -->
+    <div class="capacity-tracker">
+      <div class="capacity-bar-bg">
+        <div class="capacity-bar-fill" id="capacityBarFill" style="width: 50%;"></div>
+      </div>
+      <div class="capacity-labels">
+        <span id="capacityStatusText">⚡ 0 seats remaining for this show</span>
+        <span id="capacityOccupancy">Occupancy: 0%</span>
+      </div>
+    </div>
+
+    <!-- Section 4: Cinema Theater Seating Chart -->
+    <section class="cinema-hall-container">
+      
+      <!-- Screen with 3D Curved Light -->
+      <div class="screen-wrapper">
+        <div class="screen-curve"></div>
+        <div class="screen-glow"></div>
+        <div class="screen-caption">SCREEN THIS WAY (AUDITORIUM 1 • LASER IMAX)</div>
+      </div>
+
+      <!-- Seating Matrix -->
+      <div class="seating-area" id="seatingGrid">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- Seating Legend -->
+      <div class="seating-legend">
+        <div class="legend-item">
+          <div class="seat-sample seat-available"></div>
+          <span>Available</span>
+        </div>
+        <div class="legend-item">
+          <div class="seat-sample seat-selected"></div>
+          <span>Selected</span>
+        </div>
+        <div class="legend-item">
+          <div class="seat-sample seat-occupied"></div>
+          <span>Booked / Reserved</span>
+        </div>
+        <div class="legend-divider"></div>
+        <div class="legend-tier">
+          <span class="tier-tag tier-vip">VIP Recliner</span>
+          <span class="tier-tag tier-premium">Premium</span>
+          <span class="tier-tag tier-standard">Classic</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Sticky Bottom Checkout Bar -->
+  <aside class="checkout-bar" id="checkoutBar">
+    <div class="checkout-container">
+      <div class="checkout-info">
+        <div class="selected-movie-info">
+          <span class="checkout-movie-title" id="checkoutMovieTitle">Movie Title</span>
+          <span class="checkout-showtime-badge" id="checkoutShowtimeBadge">Today | 06:15 PM</span>
+        </div>
+        <div class="selected-seats-pills" id="selectedSeatsPills">
+          <span class="no-selection-hint">No seats selected yet. Click any available seat above!</span>
+        </div>
+      </div>
+
+      <div class="checkout-pricing">
+        <div class="price-breakdown">
+          <span class="price-label">Total Amount:</span>
+          <span class="price-val" id="checkoutTotalPrice">₹0</span>
+        </div>
+        <button id="bookTicketsBtn" class="btn-checkout" disabled>
+          <span class="btn-icon">🎟️</span>
+          <span class="btn-label" id="checkoutBtnLabel">Select Seats</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Section 5: Digital Boarding-Pass Ticket Modal -->
+  <div class="modal-overlay" id="ticketModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">&times;</button>
+      
+      <div class="ticket-header">
+        <div class="ticket-status-pill">🎉 BOOKING CONFIRMED</div>
+        <p class="ticket-sub">Show this digital e-ticket at the cinema entrance</p>
+      </div>
+
+      <!-- Ticket Canvas -->
+      <div class="e-ticket" id="eTicketContent">
+        <!-- Main Body -->
+        <div class="ticket-main">
+          <div class="ticket-brand">
+            <span class="t-logo">🎬 CinePulse Cinemas</span>
+            <span class="t-audi">AUDI 1 • 4K DOLBY</span>
+          </div>
+
+          <div class="ticket-movie-details">
+            <h3 class="t-movie-title" id="ticketMovieTitle">Dune: Part Two</h3>
+            <div class="t-tags">
+              <span class="t-tag" id="ticketGenre">Sci-Fi / Adventure</span>
+              <span class="t-tag" id="ticketDuration">2h 46m</span>
+              <span class="t-tag" id="ticketRating">⭐ 8.9</span>
+            </div>
+          </div>
+
+          <div class="ticket-grid">
+            <div class="t-grid-item">
+              <span class="t-field-title">DATE</span>
+              <span class="t-field-val" id="ticketDate">Wed, 24 Sep</span>
+            </div>
+            <div class="t-grid-item">
+              <span class="t-field-title">SHOWTIME</span>
+              <span class="t-field-val" id="ticketTime">06:15 PM</span>
+            </div>
+            <div class="t-grid-item">
+              <span class="t-field-title">SEATS (<span id="ticketSeatCount">2</span>)</span>
+              <span class="t-field-val highlight" id="ticketSeatList">A3, A4</span>
+            </div>
+            <div class="t-grid-item">
+              <span class="t-field-title">TOTAL PAID</span>
+              <span class="t-field-val highlight text-emerald" id="ticketTotalAmount">₹680</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Perforated Tear Line -->
+        <div class="ticket-perforation">
+          <span class="notch notch-top"></span>
+          <div class="perf-line"></div>
+          <span class="notch notch-bottom"></span>
+        </div>
+
+        <!-- Stub with QR & Booking ID -->
+        <div class="ticket-stub">
+          <div class="qr-code-box">
+            <!-- Dynamic SVG QR Code -->
+            <svg class="qr-svg" viewBox="0 0 100 100" id="ticketQrCode">
+              <!-- Rendered via JS -->
+            </svg>
+          </div>
+          <div class="booking-ref-block">
+            <span class="ref-title">BOOKING ID</span>
+            <span class="ref-code" id="ticketBookingId">CP-749215</span>
+          </div>
+          <span class="scan-hint">Scan at kiosk</span>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="modal-actions">
+        <button class="btn-print" id="printTicketBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Print / Download Ticket
+        </button>
+        <button class="btn-book-more" id="bookAnotherBtn">
+          Book Another Movie
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Script File -->
+  <script src="app.js"></script>
+</body>
+</html>

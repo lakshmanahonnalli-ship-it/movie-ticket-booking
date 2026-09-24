@@ -1,0 +1,19 @@
+{
+  "name": "movie-ticket-booking",
+  "version": "1.0.0",
+  "description": "Interactive Movie Ticket Booking Mini Project with real-time seat availability",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve -l 3000",
+    "start": "npx -y serve -l 3000",
+    "open": "start index.html"
+  },
+  "keywords": [
+    "movie-ticket-booking",
+    "javascript",
+    "html5",
+    "css3"
+  ],
+  "author": "",
+  "license": "ISC"
+}
